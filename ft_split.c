@@ -6,7 +6,7 @@
 /*   By: guvalenz <guvalenz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 12:32:23 by guvalenz          #+#    #+#             */
-/*   Updated: 2024/05/15 15:56:32 by guvalenz         ###   ########.fr       */
+/*   Updated: 2024/05/18 16:19:45 by guvalenz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ static size_t	ft_count_words(char const *s, char c)
 	return (words);
 }
 
-char	**ft_free(char **one, size_t z)
+static char	**ft_free(char **one, size_t z)
 {
 	while (z >= 0)
 	{
@@ -49,31 +49,27 @@ char	**ft_free(char **one, size_t z)
 	return (NULL);
 }
 
-char	**ft_loop(char const *s, char c, char **one, size_t z)
+static char	**ft_loop(char const *s, char c, char **one, size_t z)
 {
 	size_t	i;
 	size_t	j;
 
 	i = 0;
 	j = 0;
-	while ((i <= ft_strlen(s) && z <= ft_count_words(s, c)))
+	while (s[i] != '\0')
 	{
-		if ((s[i] != c && s[i + 1] != '\0') || (s[i] == c && s[i - 1] == c))
+		while (s[i] == c && s[i] != '\0')
+			i++;
+		j = i;
+		while (s[i] != '\0' && s[i] != c)
+			i++;
+		if (j < i)
 		{
-			if (s[i] == c && s[i - 1] == c && s[i + 1] != '\0')
-				j++;
-		}
-		else
-		{
-			if (s[j] == c || s[i + 1] == '\0')
-				j++;
-			one[z] = ft_substr(s, j, i - j + (s[i + 1] == '\0'));
+			one[z] = ft_substr(s, j, i - j);
 			if (!one[z])
 				return (ft_free(one, z));
 			z++;
-			j = i;
 		}
-		i++;
 	}
 	return (one);
 }
@@ -84,14 +80,14 @@ char	**ft_split(char const *s, char c)
 	size_t	z;
 
 	z = 0;
-	one = ft_calloc (((size_t)ft_count_words (s, c) + 1), sizeof(char *));
+	one = ft_calloc(((size_t)ft_count_words(s, c) + 1), sizeof(char *));
 	if (one == NULL)
 		return (NULL);
 	one = ft_loop(s, c, one, z);
 	return (one);
 }
 /*
-int    main(void)
+int	main(void)
 {
     char *s;
     int i;
